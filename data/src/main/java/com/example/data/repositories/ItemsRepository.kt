@@ -3,14 +3,13 @@ package com.example.data.repositories
 import android.content.Context
 import android.util.Log
 import com.example.data.DataBase
-import com.example.data.dao.ItemsDao
 import com.example.data.entities.Items
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class ItemsRepository(context : Context) {
 
-    val itemDao = DataBase.getDatabase(context).itemDao()
+    private val itemDao = DataBase.getDatabase(context).itemDao()
 
     suspend fun insertNewItem(item : Items) {
         withContext(Dispatchers.IO) {

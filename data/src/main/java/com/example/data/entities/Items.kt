@@ -1,11 +1,8 @@
 package com.example.data.entities
 
-import android.media.Image
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.time.LocalDateTime
-import java.util.Date
 
 @Entity(tableName = "items")
 data class Items (

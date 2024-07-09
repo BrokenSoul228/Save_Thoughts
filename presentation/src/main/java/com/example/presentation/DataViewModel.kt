@@ -1,9 +1,5 @@
 package com.example.presentation
 
-import android.content.ClipData.Item
-import android.content.res.Resources
-import android.media.Image
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,7 +10,6 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class DataViewModel(private val itemRepo : ItemsRepository) : ViewModel() {
-    val currentItem = MutableLiveData<Items>()
     val listOfAllItems = MutableLiveData<MutableList<Items>>()
 
     fun insertItem(header : String, body : String, tags : String = "white", image: String? = null) {

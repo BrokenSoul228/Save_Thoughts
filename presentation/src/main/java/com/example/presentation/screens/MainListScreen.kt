@@ -1,10 +1,5 @@
 package com.example.presentation.screens
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -26,17 +21,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.outlined.DateRange
-import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
@@ -44,22 +35,18 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.AbsoluteAlignment
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.SemanticsActions.OnClick
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -73,13 +60,12 @@ import com.example.data.repositories.ItemsRepository
 import com.example.presentation.DataViewModel
 import com.example.presentation.R
 import com.example.presentation.util.DeleteAlerter
-import kotlin.math.truncate
 
 @Composable
 fun MainListScreen(navController : NavController) {
     val context = LocalContext.current.applicationContext
     val viewModel = DataViewModel(ItemsRepository(context))
-    val scope = rememberCoroutineScope()
+//    val scope = rememberCoroutineScope()
     viewModel.getAllItemsFromDB()
     DataBase.getDatabase(context)
     val list by viewModel.listOfAllItems.observeAsState(mutableListOf())
@@ -122,7 +108,7 @@ fun MainListScreen(navController : NavController) {
                             .absolutePadding(top = 10.dp, left = 7.dp),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text(text = "${list[it].header}", fontSize = 27.sp)
+                        Text(text = list[it].header, fontSize = 27.sp)
                         Box {
                             IconButton(onClick = { openContextMenu.value = true }) {
                                 Icon(Icons.Default.MoreVert, contentDescription = "Показать меню")
@@ -150,7 +136,7 @@ fun MainListScreen(navController : NavController) {
                             .absolutePadding(left = 7.dp, top = 3.dp)
                             .fillMaxHeight(0.6F)
                     ) {
-                        Text(text = "${list[it].mainText}", fontSize = 20.sp)
+                        Text(text = list[it].mainText, fontSize = 20.sp)
                     }
                     Row (
                         modifier = Modifier
@@ -161,7 +147,7 @@ fun MainListScreen(navController : NavController) {
                         Icon(Icons.Outlined.DateRange, contentDescription = "delete",
                             Modifier
                                 .size(20.dp), tint = Color.Black)
-                        Text(text = "${list[it].date}")
+                        Text(text = list[it].date)
                         Box(
                             Modifier.fillMaxSize(),
                             contentAlignment = Alignment.CenterEnd
