@@ -20,7 +20,7 @@ fun NavGraph() {
         }
 
         composable(
-            "item_screen/{state}/{title}/{mainText}/{itemId}",
+            "item_screen/{state}/{title}/{mainText}/{itemId}/{tagColor}",
             arguments = listOf(
                 navArgument("state"){
                     type = NavType.StringType
@@ -33,6 +33,9 @@ fun NavGraph() {
                 },
                 navArgument("itemId"){
                     type = NavType.LongType
+                },
+                navArgument("tagColor"){
+                    type = NavType.StringType
                 }
             )
         )
@@ -41,7 +44,8 @@ fun NavGraph() {
             val title = it.arguments?.getString("title")
             val mainText = it.arguments?.getString("mainText")
             val itemId = it.arguments?.getLong("itemId")
-            ItemScreen(navController, userState!!, title!!, mainText!!, itemId!!)
+            val tagColor = it.arguments?.getString("tagColor", "white")
+            ItemScreen(navController, userState!!, title!!, mainText!!, itemId!!, tagColor!!)
         }
     }
 

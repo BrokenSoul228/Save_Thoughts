@@ -50,7 +50,7 @@ import com.example.presentation.DataViewModel
 import com.example.presentation.R
 
 @Composable
-fun ItemScreen(navController: NavController, state : String, title : String, mainText : String, itemId :Long) {
+fun ItemScreen(navController: NavController, state : String, title : String, mainText : String, itemId :Long, tagColors : String) {
 
     val context = LocalContext.current.applicationContext
     val viewModel = DataViewModel(ItemsRepository(context))
@@ -76,6 +76,7 @@ fun ItemScreen(navController: NavController, state : String, title : String, mai
         if (state != "new") {
             titleField.value = title
             mainField.value = mainText
+            tagColor.value = tagColors
         }
     }
 
@@ -214,5 +215,5 @@ fun CardWithTags(tagColor : MutableState<String>){
 @Preview(showBackground = true)
 @Composable
 fun Preview() {
-    ItemScreen(navController = rememberNavController(), "0", "", "", -1)
+    ItemScreen(navController = rememberNavController(), "0", "", "", -1, "white")
 }

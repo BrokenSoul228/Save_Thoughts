@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -99,7 +100,7 @@ fun MainListScreen(navController : NavController) {
                     colors = CardColors(Color(0xFFEDFDFF), contentColor = Color.Black, disabledContentColor = Color.Black, disabledContainerColor = Color.Black),
                     onClick = {
                         val new = "old"
-                        navController.navigate("item_screen/$new/${list[it].header}/${list[it].mainText}/${list[it].id}")
+                        navController.navigate("item_screen/$new/${list[it].header}/${list[it].mainText}/${list[it].id}/${list[it].tags}")
                     }
                 ) {
                     Row(
@@ -161,6 +162,7 @@ fun MainListScreen(navController : NavController) {
                                     Modifier
                                         .absolutePadding(right = 10.dp)
                                         .size(20.dp)
+                                        .border(1.dp, Color.Black, shape = CircleShape)
                                         .clickable {
                                             colorCustomMenu.value = !colorCustomMenu.value
                                         })
@@ -215,7 +217,7 @@ fun ComposeFloatingButton(navController : NavController){
             onClick = {
                 val new = "new"
                 val item = -1L
-                navController.navigate("item_screen/$new/$new/$new/$item")
+                navController.navigate("item_screen/$new/$new/$new/$item/white")
             }, containerColor = Color(0xFFC1EDF3),
         ) {
             Icon(Icons.Filled.Add, "Floating action button.", modifier = Modifier.size(30.dp,30.dp))
