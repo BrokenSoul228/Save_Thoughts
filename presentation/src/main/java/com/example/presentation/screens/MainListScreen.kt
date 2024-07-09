@@ -262,31 +262,28 @@ fun ColorCustomMenu(isVisible: MutableState<Boolean>, listItems : MutableList<It
             Image(painter = painterResource(id = R.drawable.circle_white), contentDescription = "mb", modifier = Modifier
                 .size(20.dp, 20.dp)
                 .clickable {
-//                    viewModel.updateCurrentItem(listItems[itemPos].id, listItems[itemPos].header, listItems[itemPos].mainText, tags = "white")
-                    viewModel.updateTagColors(listItems[itemPos].id, "white")
+                    viewModel.updateTagColors(listItems[itemPos].id, "white", itemPos)
                     isVisible.value = false
                 })
             Spacer(modifier = Modifier.padding(5.dp))
             Image(painter = painterResource(id = R.drawable.circle_red), contentDescription = "mb", modifier = Modifier
                 .size(20.dp, 20.dp)
                 .clickable {
-//                    viewModel.updateCurrentItem(listItems[itemPos].id, listItems[itemPos].header, listItems[itemPos].mainText, tags = "red")
-                    viewModel.updateTagColors(listItems[itemPos].id, "red")
-
+                    viewModel.updateTagColors(listItems[itemPos].id, "red", itemPos)
                     isVisible.value = false
                 })
             Spacer(modifier = Modifier.padding(5.dp))
             Image(painter = painterResource(id = R.drawable.circle_yellow), contentDescription = "mb", modifier = Modifier
                 .size(20.dp, 20.dp)
                 .clickable {
-
+                    viewModel.updateTagColors(listItems[itemPos].id, "yellow", itemPos)
                     isVisible.value = false
                 })
             Spacer(modifier = Modifier.padding(5.dp))
             Image(painter = painterResource(id = R.drawable.circle_green), contentDescription = "mb", modifier = Modifier
                 .size(20.dp, 20.dp)
                 .clickable {
-
+                    viewModel.updateTagColors(listItems[itemPos].id, "green", itemPos)
                     isVisible.value = false
                 })
         }

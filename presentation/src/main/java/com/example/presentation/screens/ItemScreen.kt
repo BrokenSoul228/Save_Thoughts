@@ -70,6 +70,9 @@ fun ItemScreen(navController: NavController, state : String, title : String, mai
 
     val context = LocalContext.current.applicationContext
     val viewModel = DataViewModel(ItemsRepository(context))
+
+    val tagColor = remember { mutableStateOf("white") }
+
     val isVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
     val visible = remember {
         mutableStateOf(true)
@@ -97,7 +100,7 @@ fun ItemScreen(navController: NavController, state : String, title : String, mai
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(text = "Add", modifier = Modifier.absolutePadding(top = 10.dp), fontSize = 30.sp, textDecoration = TextDecoration.Underline, fontWeight = FontWeight.Bold)
-        CardWithTags()
+        CardWithTags(tagColor)
         Text(text = "Title",
             Modifier
                 .fillMaxWidth()
@@ -140,6 +143,7 @@ fun ItemScreen(navController: NavController, state : String, title : String, mai
                         viewModel,
                         mainField.value,
                         titleField.value,
+                        tagColor,
                         context,
                         itemId,
                         navController
@@ -158,19 +162,21 @@ fun ItemScreen(navController: NavController, state : String, title : String, mai
     }
 }
 
-fun validation(state : String, viewModel: DataViewModel, todoText : String, titleText : String, context: Context, itemId: Long, navController : NavController) {
+fun validation(state : String, viewModel: DataViewModel, todoText : String, titleText : String, tagColor: MutableState<String>, context: Context, itemId: Long, navController : NavController) {
     if (todoText != "" && titleText != ""){
         if (state != "new"){
             viewModel.updateCurrentItem(
                 id = itemId,
                 header = titleText,
-                body = todoText
+                body = todoText,
+                tags = tagColor.value
             )
             navController.navigate("home")
         } else {
             viewModel.insertItem(
                 header = titleText,
-                body = todoText
+                body = todoText,
+                tags = tagColor.value
             )
             Toast.makeText(context, "Saved", Toast.LENGTH_SHORT).show()
             navController.navigate("home")
@@ -179,7 +185,7 @@ fun validation(state : String, viewModel: DataViewModel, todoText : String, titl
 }
 
 @Composable
-fun CardWithTags(){
+fun CardWithTags(tagColor : MutableState<String>){
     Card (
         Modifier
             .fillMaxWidth()
@@ -194,7 +200,7 @@ fun CardWithTags(){
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             Button(
-                onClick = { /*TODO*/ }, colors = ButtonColors(Color.Transparent, Color.Black, Color.Black, Color.Black)
+                onClick = { tagColor.value = "yellow" }, colors = ButtonColors(Color.Transparent, Color.Black, Color.Black, Color.Black)
             ) {
                 Image(painter = painterResource(id = R.drawable.circle_yellow), contentDescription = "mb", modifier = Modifier
                     .size(10.dp)
@@ -202,7 +208,7 @@ fun CardWithTags(){
                 Text(text = "Todo", fontSize = 12.sp)
             }
             Button(
-                onClick = { /*TODO*/ }, colors = ButtonColors(Color.Transparent, Color.Black, Color.Black, Color.Black)
+                onClick = { tagColor.value = "red" }, colors = ButtonColors(Color.Transparent, Color.Black, Color.Black, Color.Black)
             ) {
                 Image(painter = painterResource(id = R.drawable.circle_red), contentDescription = "mb", modifier = Modifier
                     .size(10.dp)
@@ -210,7 +216,7 @@ fun CardWithTags(){
                 Text(text = "Routine", fontSize = 12.sp)
             }
             Button(
-                onClick = { /*TODO*/ }, colors = ButtonColors(Color.Transparent, Color.Black, Color.Black, Color.Black)
+                onClick = { tagColor.value = "green" }, colors = ButtonColors(Color.Transparent, Color.Black, Color.Black, Color.Black)
             ) {
                 Image(painter = painterResource(id = R.drawable.circle_green), contentDescription = "mb", modifier = Modifier
                     .size(10.dp)

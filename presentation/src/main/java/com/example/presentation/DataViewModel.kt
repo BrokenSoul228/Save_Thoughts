@@ -1,7 +1,9 @@
 package com.example.presentation
 
+import android.content.ClipData.Item
 import android.content.res.Resources
 import android.media.Image
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -48,16 +50,15 @@ class DataViewModel(private val itemRepo : ItemsRepository) : ViewModel() {
         }
     }
 
-    fun updateTagColors(id : Long, color : String) {
+    fun updateTagColors(id: Long, color: String, pos: Int) {
         viewModelScope.launch {
             itemRepo.updateTagColor(id, color)
-            getAllItemsFromDB()
-        }
-    }
-
-    fun getCurrentItem(id : Long) {
-        viewModelScope.launch {
-            currentItem.postValue(itemRepo.getCurrentItem(id))
+            val updatedItem = itemRepo.getCurrentItem(id)
+            val list = listOfAllItems.value
+            if (list != null && pos >= 0 && pos < list.size) {
+                list[pos] = updatedItem
+                listOfAllItems.postValue(list!!)
+            }
         }
     }
 
