@@ -25,6 +25,9 @@ interface ItemsDao {
     fun getCurrentItem(id : Long) : Items
 
     @Query("SELECT * from items")
-    fun getAllNotes() : List<Items>
+    fun getAllNotes() : MutableList<Items>
+
+    @Query("UPDATE ITEMS SET tags = :color WHERE id = :id")
+    fun updateTag(id : Long, color : String)
 
 }

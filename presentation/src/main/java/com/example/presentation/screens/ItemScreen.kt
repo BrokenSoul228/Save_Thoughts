@@ -10,12 +10,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.absolutePadding
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.foundation.text.KeyboardOptions
@@ -95,45 +97,7 @@ fun ItemScreen(navController: NavController, state : String, title : String, mai
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(text = "Add", modifier = Modifier.absolutePadding(top = 10.dp), fontSize = 30.sp, textDecoration = TextDecoration.Underline, fontWeight = FontWeight.Bold)
-        Card (
-            Modifier
-                .fillMaxWidth()
-                .absolutePadding(top = 20.dp, left = 20.dp, right = 20.dp),
-            colors = CardColors(Color.Transparent, Color.Black, Color.Black, Color.Black),
-            border = BorderStroke(width = 1.5.dp, brush = Brush.horizontalGradient(listOf(Color.Yellow, Color.Red, Color.Green)))
-        ) {
-            Row (
-                Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp),
-                horizontalArrangement = Arrangement.SpaceAround
-            ) {
-                Button(
-                    onClick = { /*TODO*/ }, colors = ButtonColors(Color.Transparent, Color.Black, Color.Black, Color.Black)
-                ) {
-                    Image(painter = painterResource(id = R.drawable.circle_yellow), contentDescription = "mb", modifier = Modifier
-                        .size(10.dp)
-                        .absolutePadding(right = 3.dp))
-                    Text(text = "Todo")
-                }
-                Button(
-                    onClick = { /*TODO*/ }, colors = ButtonColors(Color.Transparent, Color.Black, Color.Black, Color.Black)
-                ) {
-                    Image(painter = painterResource(id = R.drawable.circle_red), contentDescription = "mb", modifier = Modifier
-                        .size(10.dp)
-                        .absolutePadding(right = 3.dp))
-                    Text(text = "Routine")
-                }
-                Button(
-                    onClick = { /*TODO*/ }, colors = ButtonColors(Color.Transparent, Color.Black, Color.Black, Color.Black)
-                ) {
-                    Image(painter = painterResource(id = R.drawable.circle_green), contentDescription = "mb", modifier = Modifier
-                        .size(10.dp)
-                        .absolutePadding(right = 3.dp))
-                    Text(text = "Event")
-                }
-            }
-        }
+        CardWithTags()
         Text(text = "Title",
             Modifier
                 .fillMaxWidth()
@@ -177,7 +141,8 @@ fun ItemScreen(navController: NavController, state : String, title : String, mai
                         mainField.value,
                         titleField.value,
                         context,
-                        itemId
+                        itemId,
+                        navController
                     )
                 },
                 Modifier
@@ -193,7 +158,7 @@ fun ItemScreen(navController: NavController, state : String, title : String, mai
     }
 }
 
-fun validation(state : String, viewModel: DataViewModel, todoText : String, titleText : String, context: Context, itemId: Long) {
+fun validation(state : String, viewModel: DataViewModel, todoText : String, titleText : String, context: Context, itemId: Long, navController : NavController) {
     if (todoText != "" && titleText != ""){
         if (state != "new"){
             viewModel.updateCurrentItem(
@@ -201,12 +166,57 @@ fun validation(state : String, viewModel: DataViewModel, todoText : String, titl
                 header = titleText,
                 body = todoText
             )
+            navController.navigate("home")
         } else {
             viewModel.insertItem(
                 header = titleText,
                 body = todoText
             )
             Toast.makeText(context, "Saved", Toast.LENGTH_SHORT).show()
+            navController.navigate("home")
+        }
+    }
+}
+
+@Composable
+fun CardWithTags(){
+    Card (
+        Modifier
+            .fillMaxWidth()
+            .absolutePadding(top = 20.dp, left = 20.dp, right = 20.dp),
+        colors = CardColors(Color.Transparent, Color.Black, Color.Black, Color.Black),
+        border = BorderStroke(width = 1.5.dp, brush = Brush.horizontalGradient(listOf(Color.Yellow, Color.Red, Color.Green)))
+    ) {
+        Row (
+            Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            Button(
+                onClick = { /*TODO*/ }, colors = ButtonColors(Color.Transparent, Color.Black, Color.Black, Color.Black)
+            ) {
+                Image(painter = painterResource(id = R.drawable.circle_yellow), contentDescription = "mb", modifier = Modifier
+                    .size(10.dp)
+                    .absolutePadding(right = 3.dp))
+                Text(text = "Todo", fontSize = 12.sp)
+            }
+            Button(
+                onClick = { /*TODO*/ }, colors = ButtonColors(Color.Transparent, Color.Black, Color.Black, Color.Black)
+            ) {
+                Image(painter = painterResource(id = R.drawable.circle_red), contentDescription = "mb", modifier = Modifier
+                    .size(10.dp)
+                    .absolutePadding(right = 3.dp))
+                Text(text = "Routine", fontSize = 12.sp)
+            }
+            Button(
+                onClick = { /*TODO*/ }, colors = ButtonColors(Color.Transparent, Color.Black, Color.Black, Color.Black)
+            ) {
+                Image(painter = painterResource(id = R.drawable.circle_green), contentDescription = "mb", modifier = Modifier
+                    .size(10.dp)
+                    .absolutePadding(right = 3.dp))
+                Text(text = "Event" ,fontSize = 12.sp)
+            }
         }
     }
 }

@@ -9,18 +9,21 @@ import com.example.data.entities.Items
 import com.example.data.repositories.ItemsRepository
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class DataViewModel(private val itemRepo : ItemsRepository) : ViewModel() {
-    private val currentItem = MutableLiveData<Items>()
-    val listOfAllItems = MutableLiveData<List<Items>>()
+    val currentItem = MutableLiveData<Items>()
+    val listOfAllItems = MutableLiveData<MutableList<Items>>()
 
     fun insertItem(header : String, body : String, tags : String = "white", image: String? = null) {
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+        val current = LocalDateTime.now().format(formatter)
         viewModelScope.launch {
             itemRepo.insertNewItem(
                 Items(
                     header = header,
                     mainText = body,
-                    date = LocalDateTime.now().toString(),
+                    date = current,
                     tags = tags,
                     image = image.toString()
                 )
@@ -41,14 +44,21 @@ class DataViewModel(private val itemRepo : ItemsRepository) : ViewModel() {
                     image = image
                 )
             )
+            getAllItemsFromDB()
         }
     }
 
-    fun getCurrentItem(id : Long) : Items {
+    fun updateTagColors(id : Long, color : String) {
         viewModelScope.launch {
-            currentItem.value = itemRepo.getCurrentItem(id)
+            itemRepo.updateTagColor(id, color)
+            getAllItemsFromDB()
         }
-        return currentItem.value!!
+    }
+
+    fun getCurrentItem(id : Long) {
+        viewModelScope.launch {
+            currentItem.postValue(itemRepo.getCurrentItem(id))
+        }
     }
 
     fun deleteItem(id: Long){

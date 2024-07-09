@@ -1,6 +1,7 @@
 package com.example.data.repositories
 
 import android.content.Context
+import android.util.Log
 import com.example.data.DataBase
 import com.example.data.dao.ItemsDao
 import com.example.data.entities.Items
@@ -17,7 +18,7 @@ class ItemsRepository(context : Context) {
         }
     }
 
-    suspend fun getAllUsersItem() : List<Items> {
+    suspend fun getAllUsersItem() : MutableList<Items> {
         return withContext(Dispatchers.IO) {
             return@withContext itemDao.getAllNotes()
         }
@@ -38,6 +39,13 @@ class ItemsRepository(context : Context) {
     suspend fun deleteSelectedItem(id : Long) {
         withContext(Dispatchers.IO){
             itemDao.delete(id)
+        }
+    }
+
+    suspend fun updateTagColor(id : Long, color : String) {
+        withContext(Dispatchers.IO) {
+            itemDao.updateTag(id, color)
+            Log.d("UPDATE COLOR", "!!!!!!!!!!")
         }
     }
 }
