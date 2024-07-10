@@ -5,46 +5,23 @@ import android.util.Log
 import com.example.data.DataBase
 import com.example.data.entities.Items
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 
 class ItemsRepository(context : Context) {
 
     private val itemDao = DataBase.getDatabase(context).itemDao()
 
-    suspend fun insertNewItem(item : Items) {
-        withContext(Dispatchers.IO) {
-            itemDao.insert(item)
-        }
-    }
+    fun getAllUsersItem() : Flow<MutableList<Items>> = itemDao.getAllNotes()
 
-    suspend fun getAllUsersItem() : MutableList<Items> {
-        return withContext(Dispatchers.IO) {
-            return@withContext itemDao.getAllNotes()
-        }
-    }
+    suspend fun insertNewItem(item : Items) = itemDao.insert(item)
 
-    suspend fun update(item : Items) {
-        withContext(Dispatchers.IO) {
-            itemDao.update(item)
-        }
-    }
+    suspend fun update(item : Items) = itemDao.update(item)
 
-    suspend fun getCurrentItem(id : Long) : Items {
-        return withContext(Dispatchers.IO) {
-            return@withContext itemDao.getCurrentItem(id)
-        }
-    }
+    suspend fun deleteSelectedItem(id : Long) = itemDao.delete(id)
 
-    suspend fun deleteSelectedItem(id : Long) {
-        withContext(Dispatchers.IO){
-            itemDao.delete(id)
-        }
-    }
+    suspend fun updateTagColor(id : Long, color : String) = itemDao.updateTag(id, color)
 
-    suspend fun updateTagColor(id : Long, color : String) {
-        withContext(Dispatchers.IO) {
-            itemDao.updateTag(id, color)
-            Log.d("UPDATE COLOR", "!!!!!!!!!!")
-        }
-    }
+    fun groupByTags(tag: String): Flow<MutableList<Items>> = itemDao.groupByTags("%$tag%")
+
 }

@@ -17,8 +17,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
@@ -30,13 +28,14 @@ import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.currentComposer
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableLongStateOf
@@ -48,14 +47,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.data.DataBase
 import com.example.data.entities.Items
 import com.example.data.repositories.ItemsRepository
 import com.example.presentation.DataViewModel
@@ -66,17 +62,10 @@ import com.example.presentation.util.DeleteAlerter
 fun MainListScreen(navController : NavController) {
     val context = LocalContext.current.applicationContext
     val viewModel = DataViewModel(ItemsRepository(context))
-//    val scope = rememberCoroutineScope()
-    viewModel.getAllItemsFromDB()
-    DataBase.getDatabase(context)
-    val list by viewModel.listOfAllItems.observeAsState(mutableListOf())
-    val shouldShowDialog = remember {
-        mutableStateOf(false)
-    }
-    val itemID = remember {
-        mutableLongStateOf(-1)
-    }
-    println(list.joinToString(" "))
+    val tags = remember { mutableStateOf("") }
+    val list by viewModel.returnListItems(tags.value).observeAsState(mutableListOf())
+    val shouldShowDialog = remember { mutableStateOf(false) }
+    val itemID = remember { mutableLongStateOf(-1) }
     if (shouldShowDialog.value) {
         DeleteAlerter(shouldShowDialog = shouldShowDialog, viewModel, itemID)
     }
@@ -85,12 +74,13 @@ fun MainListScreen(navController : NavController) {
         horizontalAlignment = AbsoluteAlignment.Right
     ) {
 
-        HeaderOfScreen()
+        HeaderOfScreen(tags)
 
         LazyColumn {
             items(list.size) {
                 val openContextMenu = remember { mutableStateOf(false) }
                 val colorCustomMenu = remember { mutableStateOf(false) }
+                print(list.joinToString(" "))
                 Card(
                     border = BorderStroke(1.dp, Color.Blue),
                     modifier = Modifier
@@ -121,13 +111,14 @@ fun MainListScreen(navController : NavController) {
                                     .background(Color.White)
                                     .border(0.9.dp, Color.Black)
                             ) {
-                                Text("Change tag", fontSize=18.sp, modifier = Modifier.padding(10.dp))
-                                HorizontalDivider()
+//                                HorizontalDivider()
                                 Text("Delete", fontSize=18.sp, modifier = Modifier
                                     .padding(10.dp)
+                                    .fillMaxWidth()
                                     .clickable {
                                         itemID.longValue = list[it].id
                                         shouldShowDialog.value = true
+                                        openContextMenu.value = false
                                     }, color = Color.Red)
                             }
                         }
@@ -177,29 +168,20 @@ fun MainListScreen(navController : NavController) {
 }
 
 @Composable
-fun HeaderOfScreen(){
-    Row (
+fun HeaderOfScreen(tags: MutableState<String>){
+    Row(
         Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.SpaceAround,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = "Save your thoughts",
-            Modifier
-                .wrapContentSize()
-                .absolutePadding(left = 15.dp, top = 15.dp, bottom = 5.dp),
-            fontStyle = FontStyle.Italic, fontFamily = FontFamily.Serif, fontSize = 26.sp, color = Color(
-                0xFF79421C
-            )
-        )
-        Row(
-            Modifier
-                .width(80.dp)
-                .absolutePadding(right = 4.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-            Image(painter = painterResource(id = R.drawable.circle_red), contentDescription = "mb", modifier = Modifier.size(20.dp,20.dp))
-            Image(painter = painterResource(id = R.drawable.circle_yellow), contentDescription = "mb", modifier = Modifier.size(20.dp,20.dp))
-            Image(painter = painterResource(id = R.drawable.circle_green), contentDescription = "mb", modifier = Modifier.size(20.dp,20.dp))
+        val listOfTags = listOf("white" to R.drawable.group_white, "red" to R.drawable.group_red,"yellow" to R.drawable.group_yellow,"green" to R.drawable.group_green)
+
+        listOfTags.forEach { (color, image) ->
+            Image(painter = painterResource(id = image), contentDescription = "mb", modifier = Modifier
+                .size(50.dp, 60.dp)
+                .clickable {
+                    tags.value = color
+                })
         }
     }
 }
@@ -228,6 +210,9 @@ fun ComposeFloatingButton(navController : NavController){
 @Composable
 fun ColorCustomMenu(isVisible: MutableState<Boolean>, listItems : MutableList<Items>,itemPos : Int, viewModel: DataViewModel) {
 
+    val listOfColors = listOf("white" to R.drawable.circle_white, "red" to R.drawable.circle_red,
+        "yellow" to R.drawable.circle_yellow,"green" to R.drawable.circle_green)
+
         Row(
             Modifier
                 .wrapContentWidth()
@@ -247,33 +232,16 @@ fun ColorCustomMenu(isVisible: MutableState<Boolean>, listItems : MutableList<It
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(painter = painterResource(id = R.drawable.circle_white), contentDescription = "mb", modifier = Modifier
-                .size(20.dp, 20.dp)
-                .clickable {
-                    viewModel.updateTagColors(listItems[itemPos].id, "white", itemPos)
-                    isVisible.value = false
-                })
-            Spacer(modifier = Modifier.padding(5.dp))
-            Image(painter = painterResource(id = R.drawable.circle_red), contentDescription = "mb", modifier = Modifier
-                .size(20.dp, 20.dp)
-                .clickable {
-                    viewModel.updateTagColors(listItems[itemPos].id, "red", itemPos)
-                    isVisible.value = false
-                })
-            Spacer(modifier = Modifier.padding(5.dp))
-            Image(painter = painterResource(id = R.drawable.circle_yellow), contentDescription = "mb", modifier = Modifier
-                .size(20.dp, 20.dp)
-                .clickable {
-                    viewModel.updateTagColors(listItems[itemPos].id, "yellow", itemPos)
-                    isVisible.value = false
-                })
-            Spacer(modifier = Modifier.padding(5.dp))
-            Image(painter = painterResource(id = R.drawable.circle_green), contentDescription = "mb", modifier = Modifier
-                .size(20.dp, 20.dp)
-                .clickable {
-                    viewModel.updateTagColors(listItems[itemPos].id, "green", itemPos)
-                    isVisible.value = false
-                })
+            listOfColors.forEach { (color, image) ->
+                Image(painter = painterResource(id = image), contentDescription = "mb", modifier = Modifier
+                    .size(20.dp, 20.dp)
+                    .border(1.dp, Color.Black, shape = CircleShape)
+                    .clickable {
+                        viewModel.updateTagColors(listItems[itemPos].id, color, itemPos)
+                        isVisible.value = false
+                    })
+                Spacer(modifier = Modifier.padding(5.dp))
+            }
         }
 }
 
@@ -285,6 +253,18 @@ fun returnTagColor(tagString: String) : Int{
         "yellow" -> R.drawable.circle_yellow
         else -> { R.drawable.circle_white }
     }
+}
+
+fun returnListGroupedOrNot(
+    currentTag: MutableState<String>,
+    listItems: MutableList<Items>,
+    groupedListItems: MutableList<Items>
+): MutableList<Items> {
+    if (currentTag.value != "")
+        return listItems
+    else {
+        println("WWWWWWWWWWWWWW ${groupedListItems.joinToString(" ")}")
+        return groupedListItems}
 }
 
 @Preview(showBackground = true)

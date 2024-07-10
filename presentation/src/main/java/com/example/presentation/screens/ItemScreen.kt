@@ -92,7 +92,7 @@ fun ItemScreen(navController: NavController, state : String, title : String, mai
                 .padding(20.dp)
                 .absolutePadding(top = 10.dp))
         OutlinedTextField(value = titleField.value, onValueChange = { titleText ->
-            titleField.value = titleText
+            if (titleText.length <= 18) titleField.value = titleText
         },
             Modifier
                 .fillMaxWidth()
